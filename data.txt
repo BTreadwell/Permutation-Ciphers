@@ -1,1 +1,1 @@
-This is some text that I want to encrypt
+This is a message that I want to encrypt using a permutation cipher

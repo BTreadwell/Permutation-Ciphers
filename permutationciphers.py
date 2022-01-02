@@ -5,16 +5,32 @@ See README for project info and requirerments
 DEFAULT_KEY = '3120'
 
 class Message():
-    def __init__(self, key, text):
+    def __init__(self, key, text, encrypt):
         self.key = key
         self.text = text
+        self.encrypted = not encrypt #is message encrypted? (if we want to encrypt, message is not encrypted)
 
     def encrypt(self, text=None):
-        etxt = ''
-        return etxt
+
+        blocks = len(self.text) // 4
+        encrypted_text = ''
+
+        for i in range(blocks):
+            temp = '' #stores the permutated block
+            for dig in range(4):
+                #self.key[dig] returns the position of the character in plaintext that belongs at index dig in the encrypted text
+                # '+ 4*i' adjusts the value according to which block we are in
+                temp+= self.text[int(self.key[dig]) + 4*i]
+            #after we permutate a block, append the permutated text to encrypted_text
+            encrypted_text += temp
+
+        self.text = encrypted_text
+        self.encrypted = True
 
     def decrypt(self, text=None):
         dtxt = ''
+
+        self.encrypted = False
         return dtxt
 
 """Returns boolean value; True for encryption, False for decryption
@@ -58,6 +74,12 @@ def parse_file_data(filename):
     #reads file to extract data, key, and whether we encrypt or decrypt
     file_contents = open(filename).read()
     file_text = ''.join(file_contents.split()) #removes All whitespace
+    file_text = file_text.lower()
+    #ensure number of characters in text is a multiple of four
+    if len(file_text) % 4 != 0:
+        addtn_char = 'e'
+        file_text += 'e' * (4 - (len(file_text) % 4))
+
     return file_text
 
 def write_new_data(filename, filetext):
@@ -66,17 +88,18 @@ def write_new_data(filename, filetext):
 def main():
     print("Start")
 
-    #Following block: Get necessary info from user input using functions
+    #collect necessary info
     encrypt = get_mode()
     filename = get_filename()
     key = get_key()
 
-
+    #clean filedata and create message object
     data = parse_file_data(filename)
-    message = Message(key, data)
+    message = Message(key, data, encrypt)
 
     if encrypt:
         message.encrypt()
+        print(message.text)
     else:
         message.decrypt()
 
