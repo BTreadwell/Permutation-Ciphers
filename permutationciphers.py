@@ -4,12 +4,16 @@ See README for project info and requirerments
 
 DEFAULT_KEY = '3120'
 
+"""
+stores message data; used to access text, encrypt message, decrypt message
+"""
 class Message():
     def __init__(self, key, text, encrypt):
         self.key = key
         self.text = text
         self.encrypted = not encrypt #is message encrypted? (if we want to encrypt, message is not encrypted)
 
+    #void; encrypts self.text using a permutation cipher with key self.key
     def encrypt(self, text=None):
 
         blocks = len(self.text) // 4
@@ -27,11 +31,26 @@ class Message():
         self.text = encrypted_text
         self.encrypted = True
 
+    #void; decrypts self.text using a permutation cipher with key self.key
     def decrypt(self, text=None):
-        dtxt = ''
+        #uses similar process to encrypt() method
 
+        blocks = len(self.text) // 4
+        decr_text = ''
+
+        for i in range(blocks):
+            #list used to support assingment
+            temp = [''] * 4
+
+            for dig in range(4):
+                #use the key to determine where each digit came from and assign it to that position in temp
+                temp[int(self.key[dig])] = self.text[dig + 4*i]
+            #convert temp to string
+            temp = ''.join(temp)
+            decr_text += temp
+
+        self.text = decr_text
         self.encrypted = False
-        return dtxt
 
 """Returns boolean value; True for encryption, False for decryption
 Accepts no arguments
@@ -83,7 +102,15 @@ def parse_file_data(filename):
     return file_text
 
 def write_new_data(filename, filetext):
-    pass
+    dest_file = open(filename, 'w')
+
+    text_list = []
+    for i in range(len(filetext)//4):
+        text_list.append(filetext[i*4:i*4+4])
+
+    formatted_text = ' '.join(text_list)
+    dest_file.write(formatted_text)
+    dest_file.close()
 
 def main():
     print("Start")
@@ -99,13 +126,15 @@ def main():
 
     if encrypt:
         message.encrypt()
-        print(message.text)
     else:
         message.decrypt()
 
-    new_filename = get_filename()
+    print(message.text)
 
+    print("Enter desination for message")
+    new_filename = get_filename()
     write_new_data(new_filename, message.text)
+
     if input("Run again (y)?\n>").lower() == 'y':
         main()
 
