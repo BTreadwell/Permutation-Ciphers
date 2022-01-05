@@ -29,7 +29,7 @@ Accepts no arguments
 User supplied key must be a permutation of the digits 0123, otherwise default key will be used
 """
 def get_key():
-    key = input("Enter (press enter to use default key or see README for info on acceptable keys)\n>")
+    key = input("Select encryption key (press enter to use default key or see README for info on acceptable keys)\n>")
     if key == '':
         return DEFAULT_KEY
     key_list = []
@@ -72,16 +72,12 @@ def main():
 
     message.permutate()
 
-    print(message.text)
-
-    print("Enter desination for message")
+    print("Message permutated; enter destination file.")
     new_filename = get_filename()
     write_new_data(new_filename, message.text)
 
-    if input("Run again (y)?\n>").lower() == 'y':
-        main()
 
 
 if __name__ == '__main__':
     main()
-    print("Process ended")
+    print("Thank you :)")
