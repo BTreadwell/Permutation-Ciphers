@@ -1,20 +1,30 @@
 """
-Module used in permutationciphers.py
-Contains Message class
+Contains Message class which is used to store information on text in addtion
+to methods used to encrypt it using a permutation cipher.
+Used in permmanager.py
 """
 
-#Stores message data and methods used in permutating data
+"""
+Stores message data and methods used in permutating data
+default constructor takes three arguments; List[int], String, boolean
+"""
 class Message():
 
-    def __init__(self, key=[3,2,1,0], text='abcdefghijklmnopqrstuvwxyz', encrypted=False):
+    def __init__(self, key, text, encrypted=0):
 
-        self.encr_key = key #encryption key
-        self.decr_key = self.get_inverse() #decryption key which is inverse of encr key
-        self.text = text
-        self.validate_text()
-        self.encrypted = encrypted
+        self.encr_key = key #String; used to encrypt
+        self.decr_key = self.get_inverse() #String; inverse of encr_key; used to decrypt
 
-    #returns list; used to find value for self.decr_key during construction
+        self.text = text #String
+        self.normalize_text() #ensures text length is evenly divisible by key length
+
+        self.encrypted = encrypted #Boolean
+
+    """
+    Return type, List[Int]
+    Computes inverse key of self.encr_key
+    Accepts no arguments
+    """
     def get_inverse(self):
         inv_key = [0] * len(self.encr_key)
 
@@ -23,15 +33,20 @@ class Message():
 
         return inv_key
 
-    #void; modifies self.text to ensure it is evenly divisible by len(self.encr_key)
-    def validate_text(self):
-        if len(self.text) % len(self.encr_key) == 0:
-            return True
-        else:
+    """
+    Void
+    Adds 'z' characters to the end of the message to ensure it is divisible by key length
+    Accepts no arguments
+    """
+    def normalize_text(self):
+        if len(self.text) % len(self.encr_key) != 0:
             self.text += 'z' * (len(self.encr_key) - len(self.text) % len(self.encr_key))
-            return True
 
-    #void; permutates self.text using a permutation cipher and appropriate key
+    """
+    Void
+    Permutates text using a permutation cipher and either encr_key or decr_key based on self.encryption
+    Accepts no arguments
+    """
     def permutate(self):
         #determine which key to use based on whether the file is encrypted or decrypted
         key = self.encr_key
@@ -44,7 +59,7 @@ class Message():
         for block in range(num_blocks):
 
             plaintext = self.text[block * len(key):(block+1)*len(key)]
-            ciphertext = [0] * len(key) #stores the permutated block
+            ciphertext = [' '] * len(key) #stores the permutated block
 
             for i in range(len(key)):
                 ciphertext[i] = plaintext[key[i]]
@@ -55,14 +70,3 @@ class Message():
 
         self.text = permu_text
         self.encrypted = not self.encrypted
-
-"""
-a = Message(key=[5,4,2,0,3,1])
-print(a.text)
-print(a.encr_key)
-a.permutate()
-print(a.text)
-print(a.decr_key)
-a.permutate()
-print(a.text)
-"""
