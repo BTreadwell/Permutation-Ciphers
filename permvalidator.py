@@ -20,8 +20,9 @@ def validate_key(key):
             raise KeyError
     #list should contain values starting at zero up to one less than the length of the list
     else:
-        key.sort()
-        if key != list(range(len(key))):
+        a = list(key)
+        a.sort()
+        if a != list(range(len(key))):
             print('else')
             raise KeyError
 
@@ -32,10 +33,7 @@ def validate_source(source):
         raise FileNotFoundError
 
 def validate_dest(dest):
-    try:
-        open(dest)
-    except:
-        raise FileError
+    pass
 def validate(a_key='0123', a_source='data.txt', a_dest='new_data.txt', strict=True):
     try:
         validate_key(a_key)

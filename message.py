@@ -67,6 +67,5 @@ class Message():
 
             #after we permutate a block, append the permutated text to encrypted_text
             permu_text += ciphertext
-
         self.text = permu_text
         self.encrypted = not self.encrypted

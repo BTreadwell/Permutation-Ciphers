@@ -1,7 +1,6 @@
 """
 *****************************************************
 See README for project info and requirerments
-+++Users are encouraged to suggest edits to README+++
 *****************************************************
 Dependencies: message.py, permvalidator.py
 
@@ -10,7 +9,7 @@ which implements permmanager with PyQt5 to create a GUI application.
 """
 
 import message, permvalidator
-DEFAULT_KEY = 5#FIX THIS
+DEFAULT_KEY = [5, 3, 1, 4, 0, 2]
 #Good
 """Return type; int
 Gets user input to determine if key or inv key should be used; 0 for key; 1 for inverse key
@@ -41,9 +40,15 @@ Accepts no arguments
 """
 def get_key():
     key = input("Select encryption key (press enter to use default key or see README for info on acceptable keys)\n>")
+    if key == '':
+        return DEFAULT_KEY
     key_list = []
-    for value in key:
-        key_list.append(int(value))
+    try:
+        for value in key:
+            key_list.append(int(value))
+    except ValueError:
+        print("Can't process that key. Try again.")
+        get_key()
     return key_list
 #good
 """Return type; String
@@ -74,11 +79,11 @@ def write_new_data(filename, filetext):
     dest_file.write(filetext)
     dest_file.close()
 
+"""Void type;
+creates message object, permutates text, and writes permutated text to file
+Accepts 4 arguments, type bool, type list[int], and 2 type strings
 """
-ADD DESCRIPTION HERE
-
-"""
-def process_request(a_mode=0, a_key='0123', a_source='data.txt', a_dest='new_data.txt'):
+def process_request(a_mode=0, a_key=DEFAULT_KEY, a_source='data.txt', a_dest='new_data.txt'):
         #clean filedata and create message object
         data = parse_file_data(a_source)
         new_message = message.Message(a_key, data, a_mode)
@@ -87,9 +92,10 @@ def process_request(a_mode=0, a_key='0123', a_source='data.txt', a_dest='new_dat
         #write output
         write_new_data(a_dest, new_message.text)
 
-"""
-ADD DESCRIPTION HERE
 
+"""Void type;
+called in main to run CL program
+no argument 
 """
 def engine():
 
@@ -99,7 +105,6 @@ def engine():
         source_file = get_filename('source')
         key = get_key()
         dest_file = get_filename('destination')
-
         is_valid = permvalidator.validate(a_key=key, a_source=source_file, a_dest = dest_file)
         if is_valid:
             process_request(a_mode=mode, a_key=key, a_source=source_file, a_dest=dest_file)
