@@ -39,15 +39,26 @@ class CipherMainWindow(QMainWindow):
     #runs when encrypt or decrypt button is clicked, passes data in fields to
     #GUIhelper function in permutationciphers module.
     def do_permutate(self, key_or_inv=0):
-        source = self.source_row[1].text
-        dest = self.dest_row[1].text
-        key = 'DEFAULT'
-        if self.key_row[1].text != None:
-            key = self.key_row[1].text
+        mode = key_or_inv
 
-        if permmanager.validate(a_key=key, a_source=source, a_dest=dest):
-            permmanager.process_request(mode=key_or_inv, a_key=key, a_source=source, a_dest=dest)
+        src = self.source_row[1].text()
+        dst = self.dest_row[1].text()
 
+        key = self.key_row[1].text()
+        if key == '':
+            key = permmanager.DEFAULT_KEY
+        else:
+            key_is_num = True
+            for value in key:
+                if not value.isnumeric():
+                    key_is_num = False
+            if not key_is_num:
+                key = permmanager.DEFAULT_KEY
+            else:
+                key = [int(x) for x in list(key)]
+
+        if permmanager.permvalidator.validate(a_key=key, a_source=src, a_dest=dst):
+            permmanager.process_request(a_mode=key_or_inv, a_key=key, a_source=src, a_dest=dst)
 
     def do_inv_permutate(self):
         self.do_permutate(key_or_inv=1)
